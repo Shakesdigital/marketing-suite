@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
 
@@ -12,27 +11,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
-
+    // Temporary: Skip authentication and go directly to dashboard
+    setTimeout(() => {
       router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.message || 'Failed to login')
-    } finally {
-      setLoading(false)
-    }
+    }, 500)
   }
 
   return (
@@ -48,12 +35,10 @@ export default function LoginPage() {
         </div>
 
         <div className="rounded-lg border bg-white p-8 shadow-sm">
+          <div className="mb-4 rounded-md bg-blue-50 p-4 text-sm text-blue-800">
+            Authentication temporarily disabled for testing. Click "Sign in" to access the dashboard.
+          </div>
           <form onSubmit={handleLogin} className="space-y-6">
-            {error && (
-              <div className="rounded-md bg-red-50 p-4 text-sm text-red-800">
-                {error}
-              </div>
-            )}
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">

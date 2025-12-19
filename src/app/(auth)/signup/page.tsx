@@ -3,10 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
-import type { Database } from '@/types/database'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -14,49 +12,15 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
 
-    try {
-      // Sign up the user
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      })
-
-      if (error) throw error
-
-      // Create profile
-      if (data.user) {
-        type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
-        const profileData: ProfileInsert = {
-          id: data.user.id,
-          email: data.user.email!,
-          full_name: fullName,
-        }
-        
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert(profileData)
-
-        if (profileError) throw profileError
-      }
-
+    // Temporary: Skip authentication and go directly to dashboard
+    setTimeout(() => {
       router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign up')
-    } finally {
-      setLoading(false)
-    }
+    }, 500)
   }
 
   return (
@@ -72,12 +36,10 @@ export default function SignupPage() {
         </div>
 
         <div className="rounded-lg border bg-white p-8 shadow-sm">
+          <div className="mb-4 rounded-md bg-blue-50 p-4 text-sm text-blue-800">
+            Authentication temporarily disabled for testing. Click "Create account" to access the dashboard.
+          </div>
           <form onSubmit={handleSignup} className="space-y-6">
-            {error && (
-              <div className="rounded-md bg-red-50 p-4 text-sm text-red-800">
-                {error}
-              </div>
-            )}
 
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
