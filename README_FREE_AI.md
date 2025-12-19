@@ -108,7 +108,7 @@ If primary provider fails, automatically tries:
 
 | Provider | Cost | Speed | Quality | Rate Limit (Free) |
 |----------|------|-------|---------|-------------------|
-| **Groq** | **FREE** ✅ | ⚡⚡⚡⚡⚡ | ⭐⭐⭐⭐ | 6,000/day |
+| **Groq** | **FREE** ✅ | ⚡⚡⚡⚡⚡ | ⭐⭐⭐⭐ | 14,400/day |
 | **OpenRouter** | **FREE** ✅ | ⚡⚡⚡⚡ | ⭐⭐⭐⭐ | Good |
 | **Hugging Face** | **FREE** ✅ | ⚡⚡⚡ | ⭐⭐⭐⭐ | 1,000/hour |
 | OpenAI GPT-4 | $20-100/mo 💰 | ⚡⚡⚡ | ⭐⭐⭐⭐⭐ | Paid only |

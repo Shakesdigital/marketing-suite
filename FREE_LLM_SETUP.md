@@ -27,9 +27,10 @@ The Shakes Digital Marketing Suite now supports **100% FREE AI providers** so yo
    ```
 
 **Rate Limits (Free):**
-- 30 requests per minute
-- 6,000 requests per day
-- More than enough for personal/small business use!
+- 30 requests per minute (RPM)
+- 14,400 requests per day (RPD)
+- Perfect for burst traffic and high-volume use!
+- Automatic rate limit handling with fallback
 
 ---
 

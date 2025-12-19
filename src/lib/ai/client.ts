@@ -1,5 +1,6 @@
 // Universal AI Client with Multi-Provider Support and Fallback Logic
 import { AIProviderConfig, getProviderForTask, getEnabledProviders } from './providers'
+import { checkRateLimit, recordRequest, getProviderWithCapacity } from './rate-limiter'
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
@@ -141,29 +142,54 @@ export async function chatCompletion(
   // Try to use preferred provider for task type
   const preferredProvider = getProviderForTask(options.taskType || 'standard')
   if (preferredProvider) {
-    try {
-      console.log(`[AI] Using ${preferredProvider.name} (${preferredProvider.models[options.taskType || 'standard']})`)
-      
-      if (preferredProvider.name === 'huggingface') {
-        return await callHuggingFace(preferredProvider, options)
-      } else {
-        return await callOpenAICompatible(preferredProvider, options)
+    // Check rate limits first
+    const rateCheck = checkRateLimit(preferredProvider.name)
+    
+    if (rateCheck.allowed) {
+      try {
+        console.log(`[AI] Using ${preferredProvider.name} (${preferredProvider.models[options.taskType || 'standard']})`)
+        
+        // Record request for rate limiting
+        recordRequest(preferredProvider.name)
+        
+        if (preferredProvider.name === 'huggingface') {
+          return await callHuggingFace(preferredProvider, options)
+        } else {
+          return await callOpenAICompatible(preferredProvider, options)
+        }
+      } catch (error) {
+        console.error(`[AI] ${preferredProvider.name} failed:`, error)
+        // Continue to fallback
       }
-    } catch (error) {
-      console.error(`[AI] ${preferredProvider.name} failed:`, error)
+    } else {
+      console.warn(`[AI] ${preferredProvider.name} rate limited: ${rateCheck.reason}`)
       // Continue to fallback
     }
   }
 
-  // Fallback: Try all providers in priority order
+  // Fallback: Try providers with available capacity
   let lastError: Error | null = null
+  
+  // Get provider with most capacity
+  const providerNames = providers.map(p => p.name)
+  const bestProvider = getProviderWithCapacity(providerNames)
 
   for (const provider of providers) {
     // Skip if we already tried this one
     if (provider.name === preferredProvider?.name) continue
 
+    // Check rate limits
+    const rateCheck = checkRateLimit(provider.name)
+    if (!rateCheck.allowed) {
+      console.warn(`[AI] ${provider.name} rate limited: ${rateCheck.reason}`)
+      continue
+    }
+
     try {
       console.log(`[AI] Fallback to ${provider.name} (${provider.models[options.taskType || 'standard']})`)
+      
+      // Record request
+      recordRequest(provider.name)
       
       if (provider.name === 'huggingface') {
         return await callHuggingFace(provider, options)

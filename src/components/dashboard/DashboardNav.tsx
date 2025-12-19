@@ -42,6 +42,7 @@ export default function DashboardNav() {
   const settingsSubNav = [
     { name: 'General', href: '/dashboard/settings' },
     { name: 'AI Providers', href: '/dashboard/settings/ai-providers' },
+    { name: 'AI Monitoring', href: '/dashboard/settings/ai-providers/monitoring' },
   ]
 
   return (
