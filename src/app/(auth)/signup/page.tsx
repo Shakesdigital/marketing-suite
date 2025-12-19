@@ -38,11 +38,11 @@ export default function SignupPage() {
       if (data.user) {
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({
+          .insert([{
             id: data.user.id,
             email: data.user.email!,
             full_name: fullName,
-          })
+          }])
 
         if (profileError) throw profileError
       }
