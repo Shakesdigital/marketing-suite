@@ -3,11 +3,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { BlogPost, TrendingTopic, ContentAngle } from '@/types/blog'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+import { generateJSON } from '@/lib/ai/client'
 
 /**
  * Research trending topics relevant to company's niche
@@ -60,25 +56,11 @@ For each topic, provide:
 - content_angles: Array of 2-3 different angles to approach the topic
 - suggested_titles: Array of 3-5 compelling blog post titles
 
-Return ONLY valid JSON with a "topics" array.`
+Return valid JSON with a "topics" array.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a content strategy expert specializing in trend analysis and SEO. Return only valid JSON.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: 'json_object' },
-    })
+    const systemPrompt = 'You are a content strategy expert specializing in trend analysis and SEO. Return only valid JSON.'
 
-    const response = JSON.parse(completion.choices[0]?.message?.content || '{}')
+    const response = await generateJSON(prompt, systemPrompt, 'standard')
     const discoveredTopics = response.topics || []
 
     // Insert topics into database
@@ -202,24 +184,9 @@ Return JSON with these fields:
   "slug": "url-friendly-slug"
 }`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert content writer and SEO specialist. Create engaging, well-researched blog posts that rank well and provide value to readers. Always return valid JSON.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 4000,
-      response_format: { type: 'json_object' },
-    })
+    const systemPrompt = 'You are an expert content writer and SEO specialist. Create engaging, well-researched blog posts that rank well and provide value to readers. Always return valid JSON.'
 
-    const blogData = JSON.parse(completion.choices[0]?.message?.content || '{}')
+    const blogData = await generateJSON(prompt, systemPrompt, 'advanced')
 
     // Insert blog post into database
     const { data: blogPost, error } = await supabase
@@ -387,23 +354,9 @@ Provide SEO optimization recommendations:
 
 Return JSON with optimizations and explanations.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an SEO expert providing actionable optimization recommendations.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.5,
-      response_format: { type: 'json_object' },
-    })
+    const systemPrompt = 'You are an SEO expert providing actionable optimization recommendations.'
 
-    const optimizations = JSON.parse(completion.choices[0]?.message?.content || '{}')
+    const optimizations = await generateJSON(prompt, systemPrompt, 'standard')
 
     return { success: true, optimizations }
   } catch (error: any) {
@@ -470,23 +423,9 @@ For each post, provide:
 
 Return JSON with "calendar" array of ${totalPosts} posts.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a content strategist creating comprehensive blog calendars.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: 'json_object' },
-    })
+    const systemPrompt = 'You are a content strategist creating comprehensive blog calendars.'
 
-    const response = JSON.parse(completion.choices[0]?.message?.content || '{}')
+    const response = await generateJSON(prompt, systemPrompt, 'standard')
 
     return { success: true, calendar: response.calendar || [] }
   } catch (error: any) {

@@ -3,11 +3,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { Lead, LeadResearchSession, ResearchCriteria } from '@/types/leads'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+import { generateJSON } from '@/lib/ai/client'
 
 /**
  * Research and generate leads based on criteria
@@ -83,33 +79,12 @@ For each lead, provide:
 
 Focus on businesses that would genuinely benefit from collaboration with ${company.name}. Make the data realistic and diverse.
 
-Return ONLY a valid JSON array of leads, no additional text.`
+Return a JSON object with a "leads" array containing all generated leads.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a lead generation AI that returns only valid JSON arrays of business leads. Each lead should be realistic and well-researched.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: 'json_object' },
-    })
+    const systemPrompt = 'You are a lead generation AI that returns only valid JSON with business leads. Each lead should be realistic and well-researched.'
 
-    const aiResponse = completion.choices[0]?.message?.content || '{}'
-    let generatedLeads = []
-
-    try {
-      const parsed = JSON.parse(aiResponse)
-      generatedLeads = parsed.leads || []
-    } catch (e) {
-      console.error('Failed to parse AI response:', e)
-    }
+    const aiResponse = await generateJSON(prompt, systemPrompt, 'standard')
+    const generatedLeads = aiResponse.leads || []
 
     // Transform and insert leads into database
     const leadsToInsert = generatedLeads.map((lead: any) => ({
@@ -163,7 +138,7 @@ Return ONLY a valid JSON array of leads, no additional text.`
         leads_found: generatedLeads.length,
         leads_imported: insertedLeads?.length || 0,
         research_duration_seconds: duration,
-        ai_model_used: 'gpt-4-turbo-preview',
+        ai_model_used: 'auto',
       })
       .eq('id', session.id)
 
@@ -305,27 +280,11 @@ Provide enriched data in JSON format with:
 - employee_count: Estimated employee count
 - revenue_estimate: Estimated annual revenue range
 - funding_stage: Funding stage if applicable
-- key_decision_makers: Array of likely decision maker roles
+- key_decision_makers: Array of likely decision maker roles`
 
-Return ONLY valid JSON.`
+    const systemPrompt = 'You are a business intelligence AI that provides detailed company information in JSON format.'
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a business intelligence AI that provides detailed company information in JSON format.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.5,
-      response_format: { type: 'json_object' },
-    })
-
-    const enrichedData = JSON.parse(completion.choices[0]?.message?.content || '{}')
+    const enrichedData = await generateJSON(prompt, systemPrompt, 'fast')
 
     // Update lead with enriched data
     const { data: updatedLead, error } = await supabase

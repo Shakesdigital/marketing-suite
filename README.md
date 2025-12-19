@@ -1,4 +1,8 @@
-We can go to# Shakes Digital Marketing Suite
+We can go to# Shakes Digital Marketing Suite 🚀
+
+## 🎉 Now with 100% FREE AI Support!
+
+No more expensive OpenAI bills! Use Groq, OpenRouter, or Hugging Face - all completely free!
 
 A comprehensive, AI-powered social media marketing assistant built with Next.js, CopilotKit, and Supabase.
 

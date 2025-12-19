@@ -4,11 +4,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { EmailTemplate, EmailCampaign, EmailOutreach } from '@/types/email'
 import { Lead } from '@/types/leads'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+import { generateJSON } from '@/lib/ai/client'
 
 /**
  * Generate personalized email content for a lead
@@ -83,23 +79,9 @@ ${emailType === 'follow_up' ? 'This is a follow-up email, so reference previous 
 
 Return JSON with "subject" and "body" fields only.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert B2B email copywriter specializing in personalized outreach that drives responses. Always return valid JSON.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: 'json_object' },
-    })
+    const systemPrompt = 'You are an expert B2B email copywriter specializing in personalized outreach that drives responses. Always return valid JSON.'
 
-    const emailContent = JSON.parse(completion.choices[0]?.message?.content || '{}')
+    const emailContent = await generateJSON(prompt, systemPrompt, 'fast')
 
     return {
       success: true,
@@ -355,25 +337,11 @@ Create variants that test different:
 
 Keep the core message the same but vary the approach.
 
-Return JSON array with ${variantCount} objects, each containing "subject" and "body" fields.`
+Return JSON object with a "variants" array containing ${variantCount} objects, each with "subject" and "body" fields.`
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an email marketing expert specializing in A/B testing and conversion optimization.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.8,
-      response_format: { type: 'json_object' },
-    })
+    const systemPrompt = 'You are an email marketing expert specializing in A/B testing and conversion optimization.'
 
-    const response = JSON.parse(completion.choices[0]?.message?.content || '{}')
+    const response = await generateJSON(prompt, systemPrompt, 'fast')
     const variants = response.variants || []
 
     // Create variant templates

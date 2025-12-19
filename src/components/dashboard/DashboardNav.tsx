@@ -39,6 +39,11 @@ export default function DashboardNav() {
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ]
 
+  const settingsSubNav = [
+    { name: 'General', href: '/dashboard/settings' },
+    { name: 'AI Providers', href: '/dashboard/settings/ai-providers' },
+  ]
+
   return (
     <div className="flex w-64 flex-col border-r bg-white">
       {/* Logo */}
