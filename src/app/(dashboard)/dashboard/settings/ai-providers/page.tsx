@@ -195,17 +195,15 @@ export default function AIProvidersPage() {
                 </ol>
 
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1"
-                    asChild
+                  <a 
+                    href={provider.setupUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center h-9 rounded-md px-3 text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <a href={provider.setupUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Get API Key
-                    </a>
-                  </Button>
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Get API Key
+                  </a>
                 </div>
               </div>
             </Card>

@@ -484,11 +484,14 @@ export default function LeadsPage() {
 
                   <div className="flex gap-2">
                     {lead.website_url && (
-                      <Button size="sm" variant="outline" asChild>
-                        <a href={lead.website_url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
+                      <a 
+                        href={lead.website_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center h-9 rounded-md px-3 text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
                     )}
                   </div>
                 </div>
