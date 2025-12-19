@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
+import type { Database } from '@/types/database'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -36,13 +37,16 @@ export default function SignupPage() {
 
       // Create profile
       if (data.user) {
+        type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
+        const profileData: ProfileInsert = {
+          id: data.user.id,
+          email: data.user.email!,
+          full_name: fullName,
+        }
+        
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert([{
-            id: data.user.id,
-            email: data.user.email!,
-            full_name: fullName,
-          }])
+          .insert(profileData)
 
         if (profileError) throw profileError
       }
