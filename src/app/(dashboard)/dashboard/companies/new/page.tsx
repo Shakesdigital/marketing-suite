@@ -234,7 +234,7 @@ export default function NewCompanyPage() {
     handler: async ({ platforms }) => {
       const updatedData = {
         ...onboardingData,
-        socialAccounts: platforms,
+        socialAccounts: platforms as SocialAccounts,
       }
 
       setOnboardingData(updatedData)
