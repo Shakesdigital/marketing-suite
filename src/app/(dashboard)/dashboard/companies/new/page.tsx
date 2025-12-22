@@ -22,10 +22,10 @@ export default function NewCompanyPage() {
     brandVoice: '',
     websiteUrl: '',
     targetAudience: {
-      demographics: {},
-      psychographics: {},
-      pain_points: [],
-      behaviors: {},
+      demographics: {} as object,
+      psychographics: {} as object,
+      pain_points: [] as string[],
+      behaviors: {} as object,
     },
     socialAccounts: {},
   })
@@ -94,15 +94,15 @@ export default function NewCompanyPage() {
         description,
         websiteUrl: websiteUrl || '',
       }
-      
+
       setOnboardingData(updatedData)
-      
+
       const result = await saveOnboardingData(userId, companyId, updatedData, 1)
       if (result.success && result.companyId) {
         setCompanyId(result.companyId)
         setCurrentStep(1)
       }
-      
+
       return `Great! I've saved ${companyName}'s basic information. Now let's talk about your products and services.`
     },
   })
@@ -131,12 +131,12 @@ export default function NewCompanyPage() {
         productsServices,
         uniqueValueProposition,
       }
-      
+
       setOnboardingData(updatedData)
-      
+
       await saveOnboardingData(userId, companyId, updatedData, 2)
       setCurrentStep(2)
-      
+
       return `Perfect! I understand your offerings. Now, let's define your brand voice and tone.`
     },
   })
@@ -158,12 +158,12 @@ export default function NewCompanyPage() {
         ...onboardingData,
         brandVoice,
       }
-      
+
       setOnboardingData(updatedData)
-      
+
       await saveOnboardingData(userId, companyId, updatedData, 3)
       setCurrentStep(3)
-      
+
       return `Excellent! Now let's talk about your target audience. Who are you trying to reach?`
     },
   })
@@ -208,12 +208,12 @@ export default function NewCompanyPage() {
           behaviors: behaviors || {},
         },
       }
-      
+
       setOnboardingData(updatedData)
-      
+
       await saveOnboardingData(userId, companyId, updatedData, 4)
       setCurrentStep(4)
-      
+
       return `Great! Last step - let's connect your social media accounts or list which platforms you want to use.`
     },
   })
@@ -235,17 +235,17 @@ export default function NewCompanyPage() {
         ...onboardingData,
         socialAccounts: platforms,
       }
-      
+
       setOnboardingData(updatedData)
-      
+
       await saveOnboardingData(userId, companyId, updatedData, 5)
       setCurrentStep(5)
-      
+
       // Complete onboarding
       if (companyId) {
         await completeOnboarding(companyId)
       }
-      
+
       return `🎉 Congratulations! Your company onboarding is complete! I'll now start analyzing your market and creating a custom marketing strategy. You can view the progress in your dashboard.`
     },
   })
@@ -292,11 +292,10 @@ export default function NewCompanyPage() {
               <div key={step.name} className="flex flex-1 items-center">
                 <div className="flex flex-col items-center">
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
-                      index <= currentStep
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${index <= currentStep
                         ? 'border-blue-600 bg-blue-600 text-white'
                         : 'border-gray-300 bg-white text-gray-400'
-                    }`}
+                      }`}
                   >
                     {index < currentStep ? (
                       <CheckCircle2 className="h-6 w-6" />
@@ -311,9 +310,8 @@ export default function NewCompanyPage() {
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`mx-4 h-0.5 flex-1 ${
-                      index < currentStep ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`mx-4 h-0.5 flex-1 ${index < currentStep ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   />
                 )}
               </div>

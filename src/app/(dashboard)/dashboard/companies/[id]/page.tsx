@@ -35,7 +35,7 @@ export default function CompanyDetailPage() {
 
       if (companyError) throw companyError
 
-      setCompany(companyData as Company)
+      setCompany(companyData ? (companyData as Company) : null)
 
       // Load latest research
       const researchData = await getLatestResearch(companyId)
@@ -191,8 +191,8 @@ export default function CompanyDetailPage() {
         }
 
         // Save to database
-        const { data, error } = await supabase
-          .from('market_research')
+        const { data, error } = await (supabase
+          .from('market_research') as any)
           .insert({
             company_id: company.id,
             competitors: mockResearch.competitors,
@@ -354,11 +354,10 @@ export default function CompanyDetailPage() {
                   <div key={index} className="rounded-lg bg-green-50 p-4">
                     <div className="flex items-start justify-between">
                       <h4 className="font-medium">{opp.title}</h4>
-                      <span className={`rounded-full px-2 py-0.5 text-xs ${
-                        opp.priority === 'high' ? 'bg-red-100 text-red-800' :
+                      <span className={`rounded-full px-2 py-0.5 text-xs ${opp.priority === 'high' ? 'bg-red-100 text-red-800' :
                         opp.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                          'bg-gray-100 text-gray-800'
+                        }`}>
                         {opp.priority}
                       </span>
                     </div>

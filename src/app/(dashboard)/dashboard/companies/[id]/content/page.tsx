@@ -32,7 +32,7 @@ export default function ContentPostsPage() {
         .eq('id', companyId)
         .single()
 
-      setCompany(companyData as Company)
+      setCompany(companyData ? (companyData as Company) : null)
 
       const postsData = await getContentPosts(companyId)
       setPosts(postsData)
@@ -86,8 +86,8 @@ export default function ContentPostsPage() {
         const caption = generateCustomCaption(company, platform, topic, contentType, tone)
         const hashtags = generateCustomHashtags(platform, topic)
 
-        const { data, error } = await supabase
-          .from('content_posts')
+        const { data, error } = await (supabase
+          .from('content_posts') as any)
           .insert({
             company_id: company.id,
             platform,
@@ -137,8 +137,8 @@ The post is saved as a draft. You can review and edit it before scheduling.`
     ],
     handler: async ({ postId, newCaption }) => {
       try {
-        const { error } = await supabase
-          .from('content_posts')
+        const { error } = await (supabase
+          .from('content_posts') as any)
           .update({ caption: newCaption })
           .eq('id', postId)
 
@@ -174,8 +174,8 @@ The post is saved as a draft. You can review and edit it before scheduling.`
     ],
     handler: async ({ postId, scheduledDate }) => {
       try {
-        const { error } = await supabase
-          .from('content_posts')
+        const { error } = await (supabase
+          .from('content_posts') as any)
           .update({
             scheduled_date: scheduledDate,
             status: 'scheduled',
@@ -211,7 +211,7 @@ The post is saved as a draft. You can review and edit it before scheduling.`
     ],
     handler: async ({ postId }) => {
       try {
-        const { error } = await supabase.from('content_posts').delete().eq('id', postId)
+        const { error } = await (supabase.from('content_posts') as any).delete().eq('id', postId)
 
         if (error) throw error
 
@@ -224,8 +224,8 @@ The post is saved as a draft. You can review and edit it before scheduling.`
     },
   })
 
-  const filteredPosts = selectedStatus === 'all' 
-    ? posts 
+  const filteredPosts = selectedStatus === 'all'
+    ? posts
     : posts.filter((p) => p.status === selectedStatus)
 
   if (loading) {
@@ -261,11 +261,10 @@ The post is saved as a draft. You can review and edit it before scheduling.`
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-              selectedStatus === status
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${selectedStatus === status
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </button>
@@ -317,16 +316,14 @@ function PostCard({ post, onSelect }: { post: ContentPost; onSelect: (post: Cont
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                platformColors[post.platform as keyof typeof platformColors]
-              }`}
+              className={`rounded-full px-3 py-1 text-xs font-medium ${platformColors[post.platform as keyof typeof platformColors]
+                }`}
             >
               {post.platform}
             </span>
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                statusColors[post.status as keyof typeof statusColors]
-              }`}
+              className={`rounded-full px-3 py-1 text-xs font-medium ${statusColors[post.status as keyof typeof statusColors]
+                }`}
             >
               {post.status}
             </span>

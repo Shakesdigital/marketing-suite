@@ -5,10 +5,10 @@ import { useParams } from 'next/navigation'
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
 import { supabase } from '@/lib/supabase/client'
 import { Company, MarketingPlan, ContentPost, ContentCalendar } from '@/types'
-import { 
-  createContentCalendar, 
-  generateBulkPosts, 
-  getContentPosts 
+import {
+  createContentCalendar,
+  generateBulkPosts,
+  getContentPosts
 } from '@/lib/actions/content-actions'
 import { getCompanyPlans } from '@/lib/actions/marketing-plan-actions'
 import { Button } from '@/components/ui/button'
@@ -42,12 +42,12 @@ export default function ContentCalendarPage() {
         .eq('id', companyId)
         .single()
 
-      setCompany(companyData as Company)
+      setCompany(companyData ? (companyData as Company) : null)
 
       // Load plans
       const plansData = await getCompanyPlans(companyId)
       setPlans(plansData)
-      
+
       const active = plansData.find((p) => p.status === 'active')
       setActivePlan(active || null)
 
@@ -61,7 +61,7 @@ export default function ContentCalendarPage() {
         .limit(1)
         .single()
 
-      setCalendar(calendarData as ContentCalendar || null)
+      setCalendar(calendarData ? (calendarData as ContentCalendar) : null)
 
       // Load posts
       const postsData = await getContentPosts(companyId)
@@ -196,8 +196,8 @@ All posts are scheduled and ready to publish. You can review and edit them in th
 
       try {
         // Upsert automation settings
-        const { error } = await supabase
-          .from('automation_settings')
+        const { error } = await (supabase
+          .from('automation_settings') as any)
           .upsert({
             company_id: company.id,
             auto_generation_enabled: autoGenerationEnabled,
@@ -239,12 +239,12 @@ Your content will now be generated ${generationFrequency} and ${autoSchedulingEn
   const monthEnd = endOfMonth(currentMonth)
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
-  const filteredPosts = selectedPlatform === 'all' 
-    ? posts 
+  const filteredPosts = selectedPlatform === 'all'
+    ? posts
     : posts.filter((p) => p.platform === selectedPlatform)
 
   const getPostsForDay = (day: Date) => {
-    return filteredPosts.filter((post) => 
+    return filteredPosts.filter((post) =>
       post.scheduled_date && isSameDay(parseISO(post.scheduled_date), day)
     )
   }
@@ -355,13 +355,11 @@ Your content will now be generated ${generationFrequency} and ${autoSchedulingEn
                 return (
                   <div
                     key={day.toISOString()}
-                    className={`min-h-32 border-b border-r p-2 ${
-                      isToday ? 'bg-blue-50' : ''
-                    }`}
+                    className={`min-h-32 border-b border-r p-2 ${isToday ? 'bg-blue-50' : ''
+                      }`}
                   >
-                    <div className={`text-sm font-medium ${
-                      isToday ? 'text-blue-600' : 'text-gray-700'
-                    }`}>
+                    <div className={`text-sm font-medium ${isToday ? 'text-blue-600' : 'text-gray-700'
+                      }`}>
                       {format(day, 'd')}
                     </div>
 
@@ -369,13 +367,12 @@ Your content will now be generated ${generationFrequency} and ${autoSchedulingEn
                       {dayPosts.map((post) => (
                         <div
                           key={post.id}
-                          className={`rounded p-1 text-xs ${
-                            post.platform === 'instagram' ? 'bg-pink-100 text-pink-800' :
+                          className={`rounded p-1 text-xs ${post.platform === 'instagram' ? 'bg-pink-100 text-pink-800' :
                             post.platform === 'facebook' ? 'bg-blue-100 text-blue-800' :
-                            post.platform === 'linkedin' ? 'bg-indigo-100 text-indigo-800' :
-                            post.platform === 'twitter' ? 'bg-sky-100 text-sky-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}
+                              post.platform === 'linkedin' ? 'bg-indigo-100 text-indigo-800' :
+                                post.platform === 'twitter' ? 'bg-sky-100 text-sky-800' :
+                                  'bg-gray-100 text-gray-800'
+                            }`}
                         >
                           {post.platform} - {format(parseISO(post.scheduled_date!), 'HH:mm')}
                         </div>

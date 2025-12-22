@@ -34,7 +34,7 @@ export default function MarketingPlansPage() {
         .eq('id', companyId)
         .single()
 
-      setCompany(companyData as Company)
+      setCompany(companyData ? (companyData as Company) : null)
 
       // Load research
       const researchData = await getLatestResearch(companyId)
