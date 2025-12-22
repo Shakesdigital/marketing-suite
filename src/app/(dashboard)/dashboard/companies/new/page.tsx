@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
 import { supabase } from '@/lib/supabase/client'
 import { saveOnboardingData, completeOnboarding } from '@/lib/actions/onboarding-actions'
+import { SocialAccounts } from '@/types'
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, Circle } from 'lucide-react'
 
@@ -27,7 +28,7 @@ export default function NewCompanyPage() {
       pain_points: [] as string[],
       behaviors: {} as object,
     },
-    socialAccounts: {},
+    socialAccounts: {} as SocialAccounts,
   })
 
   useEffect(() => {
@@ -293,8 +294,8 @@ export default function NewCompanyPage() {
                 <div className="flex flex-col items-center">
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${index <= currentStep
-                        ? 'border-blue-600 bg-blue-600 text-white'
-                        : 'border-gray-300 bg-white text-gray-400'
+                      ? 'border-blue-600 bg-blue-600 text-white'
+                      : 'border-gray-300 bg-white text-gray-400'
                       }`}
                   >
                     {index < currentStep ? (
