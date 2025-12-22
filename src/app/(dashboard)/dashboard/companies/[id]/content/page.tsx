@@ -26,8 +26,8 @@ export default function ContentPostsPage() {
 
   const loadData = async () => {
     try {
-      const { data: companyData } = await supabase
-        .from('companies')
+      const { data: companyData } = await (supabase
+        .from('companies') as any)
         .select('*')
         .eq('id', companyId)
         .single()

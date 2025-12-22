@@ -34,6 +34,11 @@ const RATE_LIMITS: Record<AIProvider, RateLimitConfig> = {
     requestsPerDay: 200000, // Effectively unlimited for paid
     burstSize: 100,
   },
+  local: {
+    requestsPerMinute: 1000, // No external rate limits for local
+    requestsPerDay: 100000, // Effectively unlimited
+    burstSize: 1000,
+  },
 }
 
 // In-memory rate limit tracking (use Redis in production)
@@ -189,7 +194,7 @@ export function resetRateLimits(provider?: AIProvider): void {
  * Get all providers' current usage
  */
 export function getAllUsageStats(): Record<AIProvider, ReturnType<typeof getUsageStats>> {
-  const providers: AIProvider[] = ['groq', 'openrouter', 'huggingface', 'openai']
+  const providers: AIProvider[] = ['groq', 'openrouter', 'huggingface', 'openai', 'local']
   const stats: any = {}
 
   for (const provider of providers) {
@@ -207,7 +212,7 @@ export function checkProviderHealth(): {
   warnings: string[]
 } {
   const warnings: string[] = []
-  const providers: AIProvider[] = ['groq', 'openrouter', 'huggingface', 'openai']
+  const providers: AIProvider[] = ['groq', 'openrouter', 'huggingface', 'openai', 'local']
 
   for (const provider of providers) {
     const stats = getUsageStats(provider)

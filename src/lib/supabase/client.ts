@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
-import { Database } from '@/types/database'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+// Using untyped client to allow operations on any table
+// This avoids TypeScript errors for tables not defined in the Database schema
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Server-side client with service role key
 export const getServiceSupabase = () => {
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createClient<Database>(supabaseUrl, supabaseServiceKey)
+  return createClient(supabaseUrl, supabaseServiceKey)
 }

@@ -20,15 +20,15 @@ export default function CompaniesPage() {
   const loadCompanies = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (user) {
-        const { data } = await supabase
-          .from('companies')
+        const { data } = await (supabase
+          .from('companies') as any)
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
 
-        setCompanies(data as Company[] || [])
+        setCompanies((data as Company[]) || [])
       }
     } catch (error) {
       console.error('Error loading companies:', error)

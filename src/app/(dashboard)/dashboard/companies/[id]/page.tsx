@@ -27,8 +27,8 @@ export default function CompanyDetailPage() {
   const loadCompanyData = async () => {
     try {
       // Load company
-      const { data: companyData, error: companyError } = await supabase
-        .from('companies')
+      const { data: companyData, error: companyError } = await (supabase
+        .from('companies') as any)
         .select('*')
         .eq('id', companyId)
         .single()

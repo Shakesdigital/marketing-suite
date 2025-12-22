@@ -29,32 +29,33 @@ export default function DashboardPage() {
       if (!user) return
 
       // Load companies
-      const { data: companiesData } = await supabase
-        .from('companies')
+      const { data: companiesData } = await (supabase
+        .from('companies') as any)
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
       if (companiesData) {
-        setCompanies(companiesData as Company[])
+        const typedCompanies = companiesData as Company[]
+        setCompanies(typedCompanies)
 
         // Calculate stats
-        const activeCompanies = companiesData.filter((c) => c.onboarding_completed).length
+        const activeCompanies = typedCompanies.filter((c) => c.onboarding_completed).length
 
         // Get marketing plans count
-        const { count: plansCount } = await supabase
-          .from('marketing_plans')
+        const { count: plansCount } = await (supabase
+          .from('marketing_plans') as any)
           .select('*', { count: 'exact', head: true })
-          .eq('company_id', companiesData[0]?.id || '')
+          .eq('company_id', typedCompanies[0]?.id || '')
 
         // Get scheduled posts count
-        const { count: postsCount } = await supabase
-          .from('content_posts')
+        const { count: postsCount } = await (supabase
+          .from('content_posts') as any)
           .select('*', { count: 'exact', head: true })
           .eq('status', 'scheduled')
 
         setStats({
-          totalCompanies: companiesData.length,
+          totalCompanies: typedCompanies.length,
           activeCompanies,
           totalPlans: plansCount || 0,
           scheduledPosts: postsCount || 0,

@@ -36,8 +36,8 @@ export default function ContentCalendarPage() {
   const loadData = async () => {
     try {
       // Load company
-      const { data: companyData } = await supabase
-        .from('companies')
+      const { data: companyData } = await (supabase
+        .from('companies') as any)
         .select('*')
         .eq('id', companyId)
         .single()
@@ -52,8 +52,8 @@ export default function ContentCalendarPage() {
       setActivePlan(active || null)
 
       // Load calendar
-      const { data: calendarData } = await supabase
-        .from('content_calendar')
+      const { data: calendarData } = await (supabase
+        .from('content_calendar') as any)
         .select('*')
         .eq('company_id', companyId)
         .eq('active', true)

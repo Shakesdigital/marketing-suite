@@ -18,10 +18,10 @@ export default function SettingsPage() {
   const loadProfile = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (user) {
-        const { data } = await supabase
-          .from('profiles')
+        const { data } = await (supabase
+          .from('profiles') as any)
           .select('*')
           .eq('id', user.id)
           .single()
@@ -40,8 +40,8 @@ export default function SettingsPage() {
     setSaving(true)
 
     try {
-      const { error } = await supabase
-        .from('profiles')
+      const { error } = await (supabase
+        .from('profiles') as any)
         .update({
           full_name: profile.full_name,
           company_name: profile.company_name,

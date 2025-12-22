@@ -16,20 +16,20 @@ export default function ResearchPage() {
   const loadResearch = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (user) {
         // Get user's companies
-        const { data: companies } = await supabase
-          .from('companies')
+        const { data: companies } = await (supabase
+          .from('companies') as any)
           .select('id')
           .eq('user_id', user.id)
 
         if (companies) {
-          const companyIds = companies.map((c) => c.id)
+          const companyIds = (companies as any[]).map((c) => c.id)
 
           // Get research for all companies
-          const { data } = await supabase
-            .from('market_research')
+          const { data } = await (supabase
+            .from('market_research') as any)
             .select('*, companies(name)')
             .in('company_id', companyIds)
             .order('created_at', { ascending: false })
